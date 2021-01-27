@@ -8,12 +8,15 @@ import android.hardware.SensorManager;
 
 public class Gyroscope {
 
-    public interface Listener{
-        void onRotation(float rx, float ry, float rz);
+    //create an interface with one method
+    public interface  Listener{
+        //create method with all 3 axis translation as argument
+        void onRotation(float tx, float ty, float ts);
     }
 
-    public Listener listener;
-
+    //create an instance
+    private Listener listener;
+    //method to set the instance
     public void setListener(Listener l){
         listener = l;
     }
@@ -21,14 +24,20 @@ public class Gyroscope {
     private SensorManager sensorManager;
     private Sensor sensor;
     private SensorEventListener sensorEventListener;
-
+    //create constructor with context as argument
     Gyroscope(Context context){
+        //create instance of sensor manager
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        //create instance of sensor with type gyroscope
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        //create the sensor listener
         sensorEventListener = new SensorEventListener() {
+            //this method is called when the device's position changes
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
+                //check if listener is different from null
                 if(listener!=null){
+                    //pass the three floats in listener on rotation of axis
                     listener.onRotation(sensorEvent.values[0], sensorEvent.values[1], sensorEvent.values[2]);
                 }
             }
@@ -40,11 +49,16 @@ public class Gyroscope {
         };
     }
 
+    //create register method for sensor notifications
     public void register(){
+        //call sensor manger's register listener and pass the required arguments
         sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    public void unregistered(){
+    //create method to unregister from sensor notifications
+    public void unregister(){
+        //call sensor manger's unregister listener and pass the required arguments
         sensorManager.unregisterListener(sensorEventListener);
     }
 }
+
